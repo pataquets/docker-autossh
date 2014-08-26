@@ -1,0 +1,29 @@
+#!/bin/bash
+AUTOSSH_CONF_DIR="/opt/autossh"
+
+if [ "$#" -eq 0 ]; then
+  echo -e "\nNo parameters have been passed.\n"
+  cat /root/README.txt
+  exit 1
+fi
+
+if [ ! -r /root/.ssh/id_rsa ]; then
+  echo -e "\nWarning: There is no RSA key present in the image at "
+  echo -e "the SSH default location '/root/.ssh/id_rsa'.\n"
+  echo -e "Add or bind mount one or specify another in the config file.\n"
+  echo -e "These are the available RSA keys at /root/.ssh :"
+  ls -Al /root/.ssh/
+fi
+
+AUTOSSH_CONF_FILE="${AUTOSSH_CONF_DIR}/${1}.conf"
+
+if [ ! -r ${AUTOSSH_CONF_FILE} ]; then
+  echo -e "\nAutoSSH configuration file '${AUTOSSH_CONF_FILE}' does not exists."
+  echo -e "Available AutoSSH config files are:\n"
+  ls -Al ${AUTOSSH_DIR}
+  exit 1
+fi
+
+shift
+
+exec autossh -M 0 -NF ${AUTOSSH_CONF_FILE} $@
