@@ -1,4 +1,4 @@
-FROM pataquets/ubuntu-base
+FROM pataquets/ubuntu:trusty
 
 RUN DEBIAN_FRONTEND=noninteractive \
 	apt-get update && \
