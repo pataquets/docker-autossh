@@ -1,9 +1,7 @@
 #!/bin/bash
-AUTOSSH_CONF_DIR="/opt/autossh"
 
 if [ "$#" -eq 0 ]; then
   echo -e "\nNo parameters have been passed.\n"
-  cat /root/README.txt
   exit 1
 fi
 
@@ -13,9 +11,11 @@ if [ ! -r /root/.ssh/id_rsa ]; then
   echo -e "Add or bind mount one or specify another in the config file.\n"
   echo -e "These are the available RSA keys at /root/.ssh :"
   ls -Al /root/.ssh/
+  echo
 fi
 
-AUTOSSH_CONF_FILE="${AUTOSSH_CONF_DIR}/${1}.conf"
+AUTOSSH_CONF_DIR="/etc/autossh.conf.d/"
+AUTOSSH_CONF_FILE="/etc/ssh/ssh_config"
 
 if [ ! -r ${AUTOSSH_CONF_FILE} ]; then
   echo -e "\nAutoSSH configuration file '${AUTOSSH_CONF_FILE}' does not exists."
@@ -24,6 +24,12 @@ if [ ! -r ${AUTOSSH_CONF_FILE} ]; then
   exit 1
 fi
 
-shift
+# Build ssh_config by including AUTOSSH_CONF_DIR defined hosts.
+echo "Building ${AUTOSSH_CONF_FILE} from files in ${AUTOSSH_CONF_DIR}..."
+cat ${AUTOSSH_CONF_DIR}/* | tee -a ${AUTOSSH_CONF_FILE}
 
-exec autossh -M 0 -NF ${AUTOSSH_CONF_FILE} $@
+echo -e "\n${AUTOSSH_CONF_FILE} built from the following files:"
+ls -Al ${AUTOSSH_CONF_DIR}
+echo
+
+exec autossh -vNF ${AUTOSSH_CONF_FILE} $@

@@ -6,16 +6,17 @@ RUN DEBIAN_FRONTEND=noninteractive \
 	apt-get clean && \
 	rm -rf /var/lib/apt/lists/*
 
-RUN mkdir -vp /opt/autossh
-VOLUME /opt/autossh
+RUN mkdir -vp /etc/autossh.conf.d/
+ADD autossh.conf.d/* /etc/autossh.conf.d/
 
 RUN mkdir -vp /root/.ssh/
 RUN chmod go-rwx /root/.ssh/
-VOLUME /root/.ssh/
 
 ADD autossh-run /root/
-ADD README.txt /root/
 
 WORKDIR /root
 
 ENTRYPOINT [ "/root/autossh-run" ]
+
+# Provide defaults: Connect by default to 'auto' defined host alias.
+CMD [ "auto" ]
