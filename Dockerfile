@@ -1,4 +1,4 @@
-FROM pataquets/ubuntu:trusty
+FROM pataquets/ubuntu:xenial
 
 RUN \
   apt-get update && \
