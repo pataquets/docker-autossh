@@ -1,4 +1,4 @@
-FROM pataquets/ubuntu:bionic
+FROM pataquets/ubuntu:focal
 
 RUN \
   apt-get update && \
